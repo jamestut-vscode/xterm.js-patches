@@ -1,0 +1,31 @@
+name: Generate Release Package
+
+on:
+  push:
+    tags:
+    - '*'
+
+jobs:
+  release-gen:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          registry-url: https://registry.npmjs.org/
+      - name: Install other dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install zsh pigz
+      - name: Download repository and apply patches
+        run: |
+          ./build-repo.sh
+      - name: Build and generate artifact
+        run: |
+          ./build-artifact.sh
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "xtermjs.tar.gz"
