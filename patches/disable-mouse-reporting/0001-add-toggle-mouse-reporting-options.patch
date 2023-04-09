@@ -1,0 +1,72 @@
+From 78f336ccc7d55d35d1d355c3b796e9c6f3919c90 Mon Sep 17 00:00:00 2001
+From: James <aslan.jnn@gmail.com>
+Date: Mon, 3 Oct 2022 16:01:10 +1100
+Subject: Lay down the option to toggle mouse reporting
+
+---
+ src/common/services/OptionsService.ts | 1 +
+ src/common/services/Services.ts       | 1 +
+ typings/xterm-headless.d.ts           | 6 ++++++
+ typings/xterm.d.ts                    | 6 ++++++
+ 4 files changed, 14 insertions(+)
+
+diff --git a/src/common/services/OptionsService.ts b/src/common/services/OptionsService.ts
+index 9709f2a7..620eb9f4 100644
+--- a/src/common/services/OptionsService.ts
++++ b/src/common/services/OptionsService.ts
+@@ -38,6 +38,7 @@ export const DEFAULT_OPTIONS: Readonly<Required<ITerminalOptions>> = {
+   disableStdin: false,
+   allowProposedApi: false,
+   allowTransparency: false,
++  allowMouseReporting: true,
+   tabStopWidth: 8,
+   theme: {},
+   rightClickSelectsWord: isMac,
+diff --git a/src/common/services/Services.ts b/src/common/services/Services.ts
+index b2009690..d8e68aba 100644
+--- a/src/common/services/Services.ts
++++ b/src/common/services/Services.ts
+@@ -210,6 +210,7 @@ export type LogLevel = 'debug' | 'info' | 'warn' | 'error' | 'off';
+ export interface ITerminalOptions {
+   allowProposedApi?: boolean;
+   allowTransparency?: boolean;
++  allowMouseReporting?: boolean;
+   altClickMovesCursor?: boolean;
+   cols?: number;
+   convertEol?: boolean;
+diff --git a/typings/xterm-headless.d.ts b/typings/xterm-headless.d.ts
+index 2ceb6a94..be652e43 100644
+--- a/typings/xterm-headless.d.ts
++++ b/typings/xterm-headless.d.ts
+@@ -31,6 +31,12 @@ declare module 'xterm-headless' {
+      */
+     allowTransparency?: boolean;
+
++    /**
++     * If enabled, mouse events will be forwarded to the program running
++     * inside the terminal. The default is true.
++     */
++    allowMouseReporting?: boolean;
++
+     /**
+      * If enabled, alt + click will move the prompt cursor to position
+      * underneath the mouse. The default is true.
+diff --git a/typings/xterm.d.ts b/typings/xterm.d.ts
+index 9facd4bd..6db923ec 100644
+--- a/typings/xterm.d.ts
++++ b/typings/xterm.d.ts
+@@ -38,6 +38,12 @@ declare module 'xterm' {
+      */
+     allowTransparency?: boolean;
+
++    /**
++     * If enabled, mouse events will be forwarded to the program running
++     * inside the terminal. The default is true.
++     */
++    allowMouseReporting?: boolean;
++
+     /**
+      * If enabled, alt + click will move the prompt cursor to position
+      * underneath the mouse. The default is true.
+--
+2.37.1 (Apple Git-137.1)

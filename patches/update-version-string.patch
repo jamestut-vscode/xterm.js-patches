@@ -1,0 +1,24 @@
+From 563c033b8d18dd323416cf5f3769e72726673393 Mon Sep 17 00:00:00 2001
+From: James <aslan.jnn@gmail.com>
+Date: Sun, 9 Apr 2023 16:01:51 +1000
+Subject: Update version string
+
+---
+ package.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/package.json b/package.json
+index 1423cab0..18c66f1a 100644
+--- a/package.json
++++ b/package.json
+@@ -1,7 +1,7 @@
+ {
+   "name": "xterm",
+   "description": "Full xterm terminal, in your browser",
+-  "version": "5.1.0",
++  "version": "5.2.0-beta.29-m4",
+   "main": "lib/xterm.js",
+   "style": "css/xterm.css",
+   "types": "typings/xterm.d.ts",
+--
+2.37.1 (Apple Git-137.1)

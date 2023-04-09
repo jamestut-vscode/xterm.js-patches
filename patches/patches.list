@@ -1,0 +1,11 @@
+base-commit: 9154831afa9aea78306d8edad8fe403616758ad3
+final-commit: a71fcaf78a77404257eeda460f90b283263097c9
+
+update-version-string.patch
+
+disable-mouse-reporting/0001-add-toggle-mouse-reporting-options.patch
+disable-mouse-reporting/0002-Activate-force-selection.patch
+disable-mouse-reporting/0003-Do-not-send-mouse-events-on-alt-buffer.patch
+disable-mouse-reporting/0004-Disable-all-mouse-protocols.patch
+
+link-fix/0001-link-mouse-down-fix.patch
