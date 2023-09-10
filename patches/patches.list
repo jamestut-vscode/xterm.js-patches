@@ -1,5 +1,5 @@
-base-commit: 823258e31150d47bc79283506c377d32686975e1
-final-commit: c779d93441ab7cbf939ae2ea6765298d688e61e7
+base-commit: 2268ae3967f103a87fddefd6ab26a5828fc99780
+final-commit: 8393d022bb41e5f4be1f9b9d919770a9ff431d0e
 
 update-version-string.patch
 
