@@ -1,14 +1,14 @@
-From 78433f3fb830f73a3497b9be324035444afb3830 Mon Sep 17 00:00:00 2001
+From 694ff9334d45b030024cb091c4938c1e9125b3fe Mon Sep 17 00:00:00 2001
 From: James <aslan.jnn@gmail.com>
-Date: Sun, 10 Sep 2023 09:57:09 +1000
+Date: Sun, 15 Oct 2023 16:29:08 +1100
 Subject: Disable all mouse protocols when mouse reporting is disabled
 
 ---
- src/browser/Terminal.ts | 107 +++++++++++++++++++++++-----------------
- 1 file changed, 61 insertions(+), 46 deletions(-)
+ src/browser/Terminal.ts | 103 +++++++++++++++++++++++-----------------
+ 1 file changed, 59 insertions(+), 44 deletions(-)
 
 diff --git a/src/browser/Terminal.ts b/src/browser/Terminal.ts
-index c33e6f3b..59d68505 100644
+index 95dec13d..94f69a5c 100644
 --- a/src/browser/Terminal.ts
 +++ b/src/browser/Terminal.ts
 @@ -115,6 +115,8 @@ export class Terminal extends CoreTerminal implements ITerminal {
@@ -20,7 +20,7 @@ index c33e6f3b..59d68505 100644
    public linkifier2: ILinkifier2;
    public viewport: IViewport | undefined;
    private _compositionHelper: ICompositionHelper | undefined;
-@@ -653,6 +655,55 @@ export class Terminal extends CoreTerminal implements ITerminal {
+@@ -652,6 +654,53 @@ export class Terminal extends CoreTerminal implements ITerminal {
        });
      }
  
@@ -58,10 +58,8 @@ index c33e6f3b..59d68505 100644
 +
 +      if (!(events & CoreMouseEventType.UP)) {
 +        self._document!.removeEventListener('mouseup', requestedEvents.mouseup!);
-+        el.removeEventListener('mouseup', requestedEvents.mouseup!);
 +        requestedEvents.mouseup = null;
 +      } else if (!requestedEvents.mouseup) {
-+        el.addEventListener('mouseup', eventListeners.mouseup);
 +        requestedEvents.mouseup = eventListeners.mouseup;
 +      }
 +
@@ -76,7 +74,7 @@ index c33e6f3b..59d68505 100644
      /**
       * Event listener state handling.
       * We listen to the onProtocolChange event of CoreMouseService and put
-@@ -696,53 +747,17 @@ export class Terminal extends CoreTerminal implements ITerminal {
+@@ -695,51 +744,17 @@ export class Terminal extends CoreTerminal implements ITerminal {
          }
        }
      };
@@ -114,10 +112,8 @@ index c33e6f3b..59d68505 100644
 -
 -      if (!(events & CoreMouseEventType.UP)) {
 -        this._document!.removeEventListener('mouseup', requestedEvents.mouseup!);
--        el.removeEventListener('mouseup', requestedEvents.mouseup!);
 -        requestedEvents.mouseup = null;
 -      } else if (!requestedEvents.mouseup) {
--        el.addEventListener('mouseup', eventListeners.mouseup);
 -        requestedEvents.mouseup = eventListeners.mouseup;
 -      }
 -
@@ -141,4 +137,4 @@ index c33e6f3b..59d68505 100644
      // force initial onProtocolChange so we dont miss early mouse requests
      this.coreMouseService.activeProtocol = this.coreMouseService.activeProtocol;
 -- 
-2.39.2 (Apple Git-144)
+2.39.3 (Apple Git-145)
