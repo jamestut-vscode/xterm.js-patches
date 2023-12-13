@@ -11,7 +11,7 @@ def printerr(*args, **kwargs):
    print(*args, **kwargs)
 
 if __name__ == "__main__":
-   URL = "https://registry.npmjs.org/xterm"
+   URL = "https://registry.npmjs.org/@xterm/xterm"
 
    ap = argparse.ArgumentParser(description="This script queries NPM's registry "
       "to look up the commit hash associated with a given version string.")
