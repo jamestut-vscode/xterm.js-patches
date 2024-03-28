@@ -1,17 +1,17 @@
-From a72332c5edb5a6c5ed15110ce0121e8393684916 Mon Sep 17 00:00:00 2001
+From 1fb1a31d10ba9e4292da820cd4298c0e2e1d9a70 Mon Sep 17 00:00:00 2001
 From: James <aslan.jnn@gmail.com>
-Date: Thu, 23 Mar 2023 22:14:35 +1100
+Date: Thu, 28 Mar 2024 18:06:19 +1100
 Subject: Do not open link when user is selecting the link text
 
 ---
- src/browser/Linkifier2.ts | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+ src/browser/Linkifier.ts | 24 ++++++++++++++++++++++--
+ 1 file changed, 22 insertions(+), 2 deletions(-)
 
-diff --git a/src/browser/Linkifier2.ts b/src/browser/Linkifier2.ts
-index c1d1d282..61fd2781 100644
---- a/src/browser/Linkifier2.ts
-+++ b/src/browser/Linkifier2.ts
-@@ -19,6 +19,7 @@ export class Linkifier2 extends Disposable implements ILinkifier2 {
+diff --git a/src/browser/Linkifier.ts b/src/browser/Linkifier.ts
+index ac37e42f..40a34b2d 100644
+--- a/src/browser/Linkifier.ts
++++ b/src/browser/Linkifier.ts
+@@ -15,6 +15,7 @@ export class Linkifier extends Disposable implements ILinkifier2 {
    public get currentLink(): ILinkWithState | undefined { return this._currentLink; }
    protected _currentLink: ILinkWithState | undefined;
    private _mouseDownLink: ILinkWithState | undefined;
@@ -19,32 +19,36 @@ index c1d1d282..61fd2781 100644
    private _lastMouseEvent: MouseEvent | undefined;
    private _linkCacheDisposables: IDisposable[] = [];
    private _lastBufferCell: IBufferCellPosition | undefined;
-@@ -234,11 +235,20 @@ export class Linkifier2 extends Disposable implements ILinkifier2 {
+@@ -212,21 +213,40 @@ export class Linkifier extends Disposable implements ILinkifier2 {
      return linkProvided;
    }
-
+ 
 -  private _handleMouseDown(): void {
-+  private _handleMouseDown(event: MouseEvent): void {
-+    if (!this._element || !this._mouseService) {
-+      return;
-+    }
-+    const position = this._positionFromMouseEvent(event, this._element, this._mouseService);
++    private _handleMouseDown(event: MouseEvent): void {
++      if (!this._element || !this._mouseService) {
++        return;
++      }
++      const position = this._positionFromMouseEvent(event, this._element, this._mouseService);
 +
      this._mouseDownLink = this._currentLink;
++
 +    this._lastMouseDownPos = position;
    }
-
+ 
    private _handleMouseUp(event: MouseEvent): void {
 +    const mouseDownLink = this._mouseDownLink;
 +    this._mouseDownLink = undefined;
 +
-     if (!this._element || !this._mouseService || !this._currentLink) {
+     if (!this._currentLink) {
        return;
      }
-@@ -248,7 +258,15 @@ export class Linkifier2 extends Disposable implements ILinkifier2 {
+ 
+     const position = this._positionFromMouseEvent(event, this._element, this._mouseService);
++
+     if (!position) {
        return;
      }
-
+ 
 -    if (this._mouseDownLink === this._currentLink && this._linkAtPosition(this._currentLink.link, position)) {
 +    // compare last mouse down position: if we strayed too much, don't open the link
 +    // that's because very likely user intended to select the text instead of opening the link
@@ -58,5 +62,5 @@ index c1d1d282..61fd2781 100644
        this._currentLink.link.activate(event, this._currentLink.link.text);
      }
    }
---
-2.37.1 (Apple Git-137.1)
+-- 
+2.39.3 (Apple Git-145)

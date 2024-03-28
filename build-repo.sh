@@ -34,6 +34,6 @@ fi
 
 cd ..
 echo "Applying patches ..."
-./spm.py -a patches xterm.js
+./spm.py patches xterm.js
 
 echo "Done! The custom xterm.js is ready to be built!"

@@ -1,6 +1,6 @@
-From 694ff9334d45b030024cb091c4938c1e9125b3fe Mon Sep 17 00:00:00 2001
+From 42c41acf24c26066fc314f321710c492792c540e Mon Sep 17 00:00:00 2001
 From: James <aslan.jnn@gmail.com>
-Date: Sun, 15 Oct 2023 16:29:08 +1100
+Date: Thu, 28 Mar 2024 17:57:56 +1100
 Subject: Disable all mouse protocols when mouse reporting is disabled
 
 ---
@@ -8,19 +8,19 @@ Subject: Disable all mouse protocols when mouse reporting is disabled
  1 file changed, 59 insertions(+), 44 deletions(-)
 
 diff --git a/src/browser/Terminal.ts b/src/browser/Terminal.ts
-index 95dec13d..94f69a5c 100644
+index a046042f..0c5e3328 100644
 --- a/src/browser/Terminal.ts
 +++ b/src/browser/Terminal.ts
-@@ -115,6 +115,8 @@ export class Terminal extends CoreTerminal implements ITerminal {
-    */
-   private _unprocessedDeadKey: boolean = false;
+@@ -70,6 +70,8 @@ export class Terminal extends CoreTerminal implements ITerminal {
+   private _helperContainer: HTMLElement | undefined;
+   private _compositionView: HTMLElement | undefined;
  
 +  private _activeMouseEvents: CoreMouseEventType = CoreMouseEventType.NONE;
 +
-   public linkifier2: ILinkifier2;
-   public viewport: IViewport | undefined;
-   private _compositionHelper: ICompositionHelper | undefined;
-@@ -652,6 +654,53 @@ export class Terminal extends CoreTerminal implements ITerminal {
+   public linkifier: ILinkifier2 | undefined;
+   private _overviewRulerRenderer: OverviewRulerRenderer | undefined;
+ 
+@@ -675,6 +677,53 @@ export class Terminal extends CoreTerminal implements ITerminal {
        });
      }
  
@@ -74,7 +74,7 @@ index 95dec13d..94f69a5c 100644
      /**
       * Event listener state handling.
       * We listen to the onProtocolChange event of CoreMouseService and put
-@@ -695,51 +744,17 @@ export class Terminal extends CoreTerminal implements ITerminal {
+@@ -718,51 +767,17 @@ export class Terminal extends CoreTerminal implements ITerminal {
          }
        }
      };
