@@ -4,14 +4,14 @@ Date: Thu, 28 Mar 2024 17:57:56 +1100
 Subject: Disable all mouse protocols when mouse reporting is disabled
 
 ---
- src/browser/Terminal.ts | 103 +++++++++++++++++++++++-----------------
+ src/browser/CoreBrowserTerminal.ts | 103 +++++++++++++++++++++++-----------------
  1 file changed, 59 insertions(+), 44 deletions(-)
 
-diff --git a/src/browser/Terminal.ts b/src/browser/Terminal.ts
-index a046042f..0c5e3328 100644
---- a/src/browser/Terminal.ts
-+++ b/src/browser/Terminal.ts
-@@ -70,6 +70,8 @@ export class Terminal extends CoreTerminal implements ITerminal {
+diff --git a/src/browser/CoreBrowserTerminal.ts b/src/browser/CoreBrowserTerminal.ts
+index 2a03633c..ae341fd7 100644
+--- a/src/browser/CoreBrowserTerminal.ts
++++ b/src/browser/CoreBrowserTerminal.ts
+@@ -69,6 +69,8 @@ export class CoreBrowserTerminal extends CoreTerminal implements ITerminal {
    private _helperContainer: HTMLElement | undefined;
    private _compositionView: HTMLElement | undefined;
  
@@ -19,8 +19,8 @@ index a046042f..0c5e3328 100644
 +
    public linkifier: ILinkifier2 | undefined;
    private _overviewRulerRenderer: OverviewRulerRenderer | undefined;
- 
-@@ -675,6 +677,53 @@ export class Terminal extends CoreTerminal implements ITerminal {
+   private _viewport: Viewport | undefined;
+@@ -664,6 +666,53 @@ export class CoreBrowserTerminal extends CoreTerminal implements ITerminal {
        });
      }
  
@@ -74,11 +74,10 @@ index a046042f..0c5e3328 100644
      /**
       * Event listener state handling.
       * We listen to the onProtocolChange event of CoreMouseService and put
-@@ -718,51 +767,17 @@ export class Terminal extends CoreTerminal implements ITerminal {
-         }
+@@ -708,50 +757,16 @@ export class CoreBrowserTerminal extends CoreTerminal implements ITerminal {
        }
      };
--    this.register(this.coreMouseService.onProtocolChange(events => {
+     this._register(this.coreMouseService.onProtocolChange(events => {
 -      // apply global changes on events
 -      if (events) {
 -        if (this.optionsService.rawOptions.logLevel === 'debug') {
@@ -122,14 +121,13 @@ index a046042f..0c5e3328 100644
 -        requestedEvents.mousedrag = null;
 -      } else if (!requestedEvents.mousedrag) {
 -        requestedEvents.mousedrag = eventListeners.mousedrag;
-+    this.register(this.coreMouseService.onProtocolChange((events) => {
 +      this._activeMouseEvents = events;
 +      if (!this.optionsService.rawOptions.allowMouseReporting) {
 +        events = CoreMouseEventType.NONE;
        }
 +      mouseProtocolChangeHandler(events);
 +    }));
-+    this.register(this.optionsService.onOptionChange(() => {
++    this._register(this.optionsService.onOptionChange(() => {
 +      let events = this.optionsService.rawOptions.allowMouseReporting ?
 +        this._activeMouseEvents : CoreMouseEventType.NONE;
 +      mouseProtocolChangeHandler(events);
