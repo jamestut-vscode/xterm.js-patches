@@ -6,13 +6,6 @@ set -e
 
 cd ${0:a:h}
 
-if ! [ -e spm.py ]
-then
-    echo "Downloading Simple Patch Manager ..."
-    curl -L https://raw.githubusercontent.com/jamestut/spm/main/spm.py > spm.py
-    chmod +x spm.py
-fi
-
 # clone xterm.js if not exist
 if ! [ -d xterm.js ]
 then
@@ -34,6 +27,6 @@ fi
 
 cd ..
 echo "Applying patches ..."
-./spm.py patches xterm.js
+spm/spm.py patches xterm.js
 
 echo "Done! The custom xterm.js is ready to be built!"
