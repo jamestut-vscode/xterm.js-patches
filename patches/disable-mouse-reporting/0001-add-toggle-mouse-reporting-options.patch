@@ -14,14 +14,13 @@ diff --git a/src/common/services/OptionsService.ts b/src/common/services/Options
 index 9709f2a7..620eb9f4 100644
 --- a/src/common/services/OptionsService.ts
 +++ b/src/common/services/OptionsService.ts
-@@ -38,6 +38,7 @@ export const DEFAULT_OPTIONS: Readonly<Required<ITerminalOptions>> = {
+@@ -38,5 +38,6 @@ export const DEFAULT_OPTIONS: Readonly<Required<ITerminalOptions>> = {
    disableStdin: false,
    allowProposedApi: false,
    allowTransparency: false,
 +  allowMouseReporting: true,
    tabStopWidth: 8,
    theme: {},
-   rightClickSelectsWord: isMac,
 diff --git a/src/common/services/Services.ts b/src/common/services/Services.ts
 index b2009690..d8e68aba 100644
 --- a/src/common/services/Services.ts
