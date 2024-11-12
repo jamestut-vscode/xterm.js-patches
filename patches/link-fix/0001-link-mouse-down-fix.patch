@@ -49,7 +49,7 @@ index ac37e42f..40a34b2d 100644
        return;
      }
  
--    if (this._mouseDownLink === this._currentLink && this._linkAtPosition(this._currentLink.link, position)) {
+-    if (this._mouseDownLink && linkEquals(this._mouseDownLink.link, this._currentLink.link) && this._linkAtPosition(this._currentLink.link, position)) {
 +    // compare last mouse down position: if we strayed too much, don't open the link
 +    // that's because very likely user intended to select the text instead of opening the link
 +    let selectionDetected = true;
@@ -58,7 +58,7 @@ index ac37e42f..40a34b2d 100644
 +      selectionDetected = deltaMov >= 2;
 +    }
 +
-+    if (!selectionDetected && mouseDownLink === this._currentLink && this._linkAtPosition(this._currentLink.link, position)) {
++    if (!selectionDetected && mouseDownLink && linkEquals(mouseDownLink.link, this._currentLink.link) && this._linkAtPosition(this._currentLink.link, position)) {
        this._currentLink.link.activate(event, this._currentLink.link.text);
      }
    }

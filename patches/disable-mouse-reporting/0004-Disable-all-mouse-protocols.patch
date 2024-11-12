@@ -17,9 +17,9 @@ index 2a03633c..ae341fd7 100644
  
 +  private _activeMouseEvents: CoreMouseEventType = CoreMouseEventType.NONE;
 +
-   public linkifier: ILinkifier2 | undefined;
+   private readonly _linkifier: MutableDisposable<ILinkifier2> = this._register(new MutableDisposable());
+   public get linkifier(): ILinkifier2 | undefined { return this._linkifier.value; }
    private _overviewRulerRenderer: OverviewRulerRenderer | undefined;
-   private _viewport: Viewport | undefined;
 @@ -664,6 +666,53 @@ export class CoreBrowserTerminal extends CoreTerminal implements ITerminal {
        });
      }
