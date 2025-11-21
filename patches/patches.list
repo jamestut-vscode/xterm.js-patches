@@ -1,4 +1,4 @@
-base-commit: 0d1e6b7a5e6053ab2073f77ebb2b2d80349d565b
+base-commit: 6c79a46513b857682538f594fd0e14f59b53d223
 final-commit: ignore
 
 update-version-string.patch
