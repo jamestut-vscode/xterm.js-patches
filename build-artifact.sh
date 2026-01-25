@@ -9,9 +9,8 @@ FINALNAME=xtermjs.tar.gz
 
 mkdir -p out
 cd xterm.js
-yarn
-yarn setup
-yarn package
+npm ci
+npm run package
 npm pack --pack-destination ../out
 cd ../out
 mv *.tgz $FINALNAME
