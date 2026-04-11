@@ -1,14 +1,14 @@
-From 1fb1a31d10ba9e4292da820cd4298c0e2e1d9a70 Mon Sep 17 00:00:00 2001
+From 8d5a12843ca4e7f076a8868cc4feb61be2e71aaa Mon Sep 17 00:00:00 2001
 From: James <aslan.jnn@gmail.com>
-Date: Thu, 28 Mar 2024 18:06:19 +1100
+Date: Sat, 11 Apr 2026 12:00:00 +1000
 Subject: Do not open link when user is selecting the link text
 
 ---
- src/browser/Linkifier.ts | 24 ++++++++++++++++++++++--
- 1 file changed, 22 insertions(+), 2 deletions(-)
+ src/browser/Linkifier.ts | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
 
 diff --git a/src/browser/Linkifier.ts b/src/browser/Linkifier.ts
-index ac37e42f..40a34b2d 100644
+index 31c91dae..d56aac33 100644
 --- a/src/browser/Linkifier.ts
 +++ b/src/browser/Linkifier.ts
 @@ -15,6 +15,7 @@ export class Linkifier extends Disposable implements ILinkifier2 {
@@ -19,16 +19,16 @@ index ac37e42f..40a34b2d 100644
    private _lastMouseEvent: MouseEvent | undefined;
    private _linkCacheDisposables: IDisposable[] = [];
    private _lastBufferCell: IBufferCellPosition | undefined;
-@@ -212,21 +213,40 @@ export class Linkifier extends Disposable implements ILinkifier2 {
+@@ -213,11 +214,21 @@ export class Linkifier extends Disposable implements ILinkifier2 {
      return linkProvided;
    }
  
 -  private _handleMouseDown(): void {
-+    private _handleMouseDown(event: MouseEvent): void {
-+      if (!this._element || !this._mouseService) {
-+        return;
-+      }
-+      const position = this._positionFromMouseEvent(event, this._element, this._mouseService);
++  private _handleMouseDown(event: MouseEvent): void {
++    if (!this._element) {
++      return;
++    }
++    const position = this._positionFromMouseEvent(event, this._element);
 +
      this._mouseDownLink = this._currentLink;
 +
@@ -42,10 +42,7 @@ index ac37e42f..40a34b2d 100644
      if (!this._currentLink) {
        return;
      }
- 
-     const position = this._positionFromMouseEvent(event, this._element, this._mouseService);
-+
-     if (!position) {
+@@ -227,7 +238,15 @@ export class Linkifier extends Disposable implements ILinkifier2 {
        return;
      }
  
@@ -54,7 +51,7 @@ index ac37e42f..40a34b2d 100644
 +    // that's because very likely user intended to select the text instead of opening the link
 +    let selectionDetected = true;
 +    if (this._lastMouseDownPos) {
-+      const deltaMov = Math.abs(this._lastMouseDownPos.x - position.x) + Math.abs(this._lastMouseDownPos.y - position.y)
++      const deltaMov = Math.abs(this._lastMouseDownPos.x - position.x) + Math.abs(this._lastMouseDownPos.y - position.y);
 +      selectionDetected = deltaMov >= 2;
 +    }
 +
@@ -63,4 +60,4 @@ index ac37e42f..40a34b2d 100644
      }
    }
 -- 
-2.39.3 (Apple Git-145)
+2.50.1 (Apple Git-155)

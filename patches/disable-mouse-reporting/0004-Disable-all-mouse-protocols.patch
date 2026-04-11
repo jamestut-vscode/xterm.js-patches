@@ -1,138 +1,40 @@
-From 42c41acf24c26066fc314f321710c492792c540e Mon Sep 17 00:00:00 2001
+From cc3930b7d072488bbfa4f09f8bb822c0a098115f Mon Sep 17 00:00:00 2001
 From: James <aslan.jnn@gmail.com>
-Date: Thu, 28 Mar 2024 17:57:56 +1100
+Date: Sat, 11 Apr 2026 12:00:00 +1100
 Subject: Disable all mouse protocols when mouse reporting is disabled
 
 ---
- src/browser/CoreBrowserTerminal.ts | 103 +++++++++++++++++++++++-----------------
- 1 file changed, 59 insertions(+), 44 deletions(-)
+ src/browser/services/MouseService.ts | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/src/browser/CoreBrowserTerminal.ts b/src/browser/CoreBrowserTerminal.ts
-index 2a03633c..ae341fd7 100644
---- a/src/browser/CoreBrowserTerminal.ts
-+++ b/src/browser/CoreBrowserTerminal.ts
-@@ -69,6 +69,8 @@ export class CoreBrowserTerminal extends CoreTerminal implements ITerminal {
-   private _helperContainer: HTMLElement | undefined;
-   private _compositionView: HTMLElement | undefined;
- 
+diff --git a/src/browser/services/MouseService.ts b/src/browser/services/MouseService.ts
+index 5a58d964..7cbeb084 100644
+--- a/src/browser/services/MouseService.ts
++++ b/src/browser/services/MouseService.ts
+@@ -25,6 +25,7 @@ export class MouseService implements IMouseService {
+   private _lastEvent: ICoreMouseEvent | null = null;
+   private _wheelPartialScroll: number = 0;
+   private _touchScrollAccumulator: number = 0;
 +  private _activeMouseEvents: CoreMouseEventType = CoreMouseEventType.NONE;
-+
-   private readonly _linkifier: MutableDisposable<ILinkifier2> = this._register(new MutableDisposable());
-   public get linkifier(): ILinkifier2 | undefined { return this._linkifier.value; }
-   private _overviewRulerRenderer: OverviewRulerRenderer | undefined;
-@@ -664,6 +666,53 @@ export class CoreBrowserTerminal extends CoreTerminal implements ITerminal {
-       });
-     }
  
-+    function mouseProtocolChangeHandler(events: CoreMouseEventType) {
-+      // apply global changes on events
-+      if (events) {
-+        if (self.optionsService.rawOptions.logLevel === 'debug') {
-+          self._logService.debug('Binding to mouse events:', self.coreMouseService.explainEvents(events));
-+        }
-+        self.element!.classList.add('enable-mouse-events');
-+        self._selectionService!.disable();
-+      } else {
-+        self._logService.debug('Unbinding from mouse events.');
-+        self.element!.classList.remove('enable-mouse-events');
-+        self._selectionService!.enable();
-+      }
-+
-+      // add/remove handlers from requestedEvents
-+
-+      if (!(events & CoreMouseEventType.MOVE)) {
-+        el.removeEventListener('mousemove', requestedEvents.mousemove!);
-+        requestedEvents.mousemove = null;
-+      } else if (!requestedEvents.mousemove) {
-+        el.addEventListener('mousemove', eventListeners.mousemove);
-+        requestedEvents.mousemove = eventListeners.mousemove;
-+      }
-+
-+      if (!(events & CoreMouseEventType.WHEEL)) {
-+        el.removeEventListener('wheel', requestedEvents.wheel!);
-+        requestedEvents.wheel = null;
-+      } else if (!requestedEvents.wheel) {
-+        el.addEventListener('wheel', eventListeners.wheel, { passive: false });
-+        requestedEvents.wheel = eventListeners.wheel;
-+      }
-+
-+      if (!(events & CoreMouseEventType.UP)) {
-+        self._document!.removeEventListener('mouseup', requestedEvents.mouseup!);
-+        requestedEvents.mouseup = null;
-+      } else if (!requestedEvents.mouseup) {
-+        requestedEvents.mouseup = eventListeners.mouseup;
-+      }
-+
-+      if (!(events & CoreMouseEventType.DRAG)) {
-+        self._document!.removeEventListener('mousemove', requestedEvents.mousedrag!);
-+        requestedEvents.mousedrag = null;
-+      } else if (!requestedEvents.mousedrag) {
-+        requestedEvents.mousedrag = eventListeners.mousedrag;
-+      }
-+    }
-+
-     /**
-      * Event listener state handling.
-      * We listen to the onProtocolChange event of CoreMouseService and put
-@@ -708,50 +757,16 @@ export class CoreBrowserTerminal extends CoreTerminal implements ITerminal {
-       }
+   constructor(
+     @IRenderService private readonly _renderService: IRenderService,
+@@ -64,6 +65,15 @@ export class MouseService implements IMouseService {
+       mousemove: (ev: Event) => this._handleMouseMove(ctx, ev as MouseEvent)
      };
-     this._register(this.coreMouseService.onProtocolChange(events => {
--      // apply global changes on events
--      if (events) {
--        if (this.optionsService.rawOptions.logLevel === 'debug') {
--          this._logService.debug('Binding to mouse events:', this.coreMouseService.explainEvents(events));
--        }
--        this.element!.classList.add('enable-mouse-events');
--        this._selectionService!.disable();
--      } else {
--        this._logService.debug('Unbinding from mouse events.');
--        this.element!.classList.remove('enable-mouse-events');
--        this._selectionService!.enable();
--      }
--
--      // add/remove handlers from requestedEvents
--
--      if (!(events & CoreMouseEventType.MOVE)) {
--        el.removeEventListener('mousemove', requestedEvents.mousemove!);
--        requestedEvents.mousemove = null;
--      } else if (!requestedEvents.mousemove) {
--        el.addEventListener('mousemove', eventListeners.mousemove);
--        requestedEvents.mousemove = eventListeners.mousemove;
--      }
--
--      if (!(events & CoreMouseEventType.WHEEL)) {
--        el.removeEventListener('wheel', requestedEvents.wheel!);
--        requestedEvents.wheel = null;
--      } else if (!requestedEvents.wheel) {
--        el.addEventListener('wheel', eventListeners.wheel, { passive: false });
--        requestedEvents.wheel = eventListeners.wheel;
--      }
--
--      if (!(events & CoreMouseEventType.UP)) {
--        this._document!.removeEventListener('mouseup', requestedEvents.mouseup!);
--        requestedEvents.mouseup = null;
--      } else if (!requestedEvents.mouseup) {
--        requestedEvents.mouseup = eventListeners.mouseup;
--      }
--
--      if (!(events & CoreMouseEventType.DRAG)) {
--        this._document!.removeEventListener('mousemove', requestedEvents.mousedrag!);
--        requestedEvents.mousedrag = null;
--      } else if (!requestedEvents.mousedrag) {
--        requestedEvents.mousedrag = eventListeners.mousedrag;
+     register(this._mouseStateService.onProtocolChange(events => {
 +      this._activeMouseEvents = events;
-+      if (!this.optionsService.rawOptions.allowMouseReporting) {
++      if (!this._optionsService.rawOptions.allowMouseReporting) {
 +        events = CoreMouseEventType.NONE;
-       }
-+      mouseProtocolChangeHandler(events);
++      }
++      this._handleProtocolChange(ctx, eventListeners, events);
 +    }));
-+    this._register(this.optionsService.onOptionChange(() => {
-+      let events = this.optionsService.rawOptions.allowMouseReporting ?
++    register(this._optionsService.onOptionChange(() => {
++      const events = this._optionsService.rawOptions.allowMouseReporting ?
 +        this._activeMouseEvents : CoreMouseEventType.NONE;
-+      mouseProtocolChangeHandler(events);
+       this._handleProtocolChange(ctx, eventListeners, events);
      }));
      // force initial onProtocolChange so we dont miss early mouse requests
-     this.coreMouseService.activeProtocol = this.coreMouseService.activeProtocol;
 -- 
-2.39.3 (Apple Git-145)
+2.50.1 (Apple Git-155)
+

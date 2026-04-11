@@ -1,32 +1,31 @@
-From 01b0233f2d49d3a34c54f47d1be75c9d9874ae9e Mon Sep 17 00:00:00 2001
+From 26a154bac2ca25256ff1be07dd08a847c43fa462 Mon Sep 17 00:00:00 2001
 From: James <aslan.jnn@gmail.com>
-Date: Thu, 23 Mar 2023 16:53:20 +1100
-Subject: Do not send mouse events on alt scrollback buffer when
- mouse reporting is disabled
+Date: Sat, 11 Apr 2026 11:36:52 +1000
+Subject: Do not send mouse events on alt scrollback buffer when  mouse
+ reporting is disabled
 
 ---
- src/browser/CoreBrowserTerminal.ts | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ src/browser/services/MouseService.ts | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/src/browser/CoreBrowserTerminal.ts b/src/browser/CoreBrowserTerminal.ts
-index f35f2882..2a03633c 100644
---- a/src/browser/CoreBrowserTerminal.ts
-+++ b/src/browser/CoreBrowserTerminal.ts
-@@ -809,9 +809,11 @@ export class CoreBrowserTerminal extends CoreTerminal implements ITerminal {
-         }
- 
-         // Construct and send sequences
--        const sequence = C0.ESC + (this.coreService.decPrivateModes.applicationCursorKeys ? 'O' : '[') + (ev.deltaY < 0 ? 'A' : 'B');
--        this.coreService.triggerDataEvent(sequence, true);
--        return this.cancel(ev, true);
-+        if (this.optionsService.rawOptions.allowMouseReporting) {
-+          const sequence = C0.ESC + (this.coreService.decPrivateModes.applicationCursorKeys ? 'O' : '[') + (ev.deltaY < 0 ? 'A' : 'B');
-+          this.coreService.triggerDataEvent(sequence, true);
-+          return this.cancel(ev, true);
-+        }
+diff --git a/src/browser/services/MouseService.ts b/src/browser/services/MouseService.ts
+index d701796c..5a58d964 100644
+--- a/src/browser/services/MouseService.ts
++++ b/src/browser/services/MouseService.ts
+@@ -261,8 +261,12 @@ export class MouseService implements IMouseService {
        }
-     }, { passive: false }));
-   }
-
---
-2.37.1 (Apple Git-137.1)
+ 
+       // Construct and send sequences
+-      const sequence = C0.ESC + (this._coreService.decPrivateModes.applicationCursorKeys ? 'O' : '[') + (ev.deltaY < 0 ? 'A' : 'B');
+-      this._coreService.triggerDataEvent(sequence, true);
++      if (this._optionsService.rawOptions.allowMouseReporting) {
++        const sequence = C0.ESC + (this._coreService.decPrivateModes.applicationCursorKeys ? 'O' : '[') + (ev.deltaY < 0 ? 'A' : 'B');
++        this._coreService.triggerDataEvent(sequence, true);
++      } else {
++        return;
++      }
+       ev.preventDefault();
+       ev.stopPropagation();
+       return false;
+-- 
+2.50.1 (Apple Git-155)
