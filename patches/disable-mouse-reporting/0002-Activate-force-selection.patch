@@ -1,6 +1,6 @@
-From 104c20821e4cfdfb46367154753e58e65984856c Mon Sep 17 00:00:00 2001
+From 76ab8286e08a72eafa30a99862d01025bd4a4027 Mon Sep 17 00:00:00 2001
 From: James <aslan.jnn@gmail.com>
-Date: Mon, 3 Oct 2022 16:01:27 +1100
+Date: Wed, 8 Jul 2026 00:00:00 +0000
 Subject: Activate force selection when mouse reporting is disabled
 
 ---
@@ -8,10 +8,10 @@ Subject: Activate force selection when mouse reporting is disabled
  1 file changed, 4 insertions(+)
 
 diff --git a/src/browser/services/SelectionService.ts b/src/browser/services/SelectionService.ts
-index 486c1941..3970372b 100644
+index 39d8dd76b..3184dd2ca 100644
 --- a/src/browser/services/SelectionService.ts
 +++ b/src/browser/services/SelectionService.ts
-@@ -427,6 +427,10 @@ export class SelectionService extends Disposable implements ISelectionService {
+@@ -435,6 +435,10 @@ export class SelectionService extends Disposable implements ISelectionService {
     * @param event The mouse event.
     */
    public shouldForceSelection(event: MouseEvent): boolean {
@@ -19,8 +19,9 @@ index 486c1941..3970372b 100644
 +      return true;
 +    }
 +
-     if (Browser.isMac) {
-       return event.altKey && this._optionsService.rawOptions.macOptionClickForcesSelection;
+     if (this._optionsService.rawOptions.mouseEventsRequireAlt && this._mouseStateService.areMouseEventsActive) {
+       return !event.altKey;
      }
---
-2.37.1 (Apple Git-137.1)
+-- 
+2.54.0 (Apple Git-156)
+

@@ -1,6 +1,6 @@
-From cc3930b7d072488bbfa4f09f8bb822c0a098115f Mon Sep 17 00:00:00 2001
+From 7adef06e685f35dea1ddcdb510cd43f838516ffb Mon Sep 17 00:00:00 2001
 From: James <aslan.jnn@gmail.com>
-Date: Sat, 11 Apr 2026 12:00:00 +1100
+Date: Wed, 8 Jul 2026 00:00:00 +0000
 Subject: Disable all mouse protocols when mouse reporting is disabled
 
 ---
@@ -8,20 +8,20 @@ Subject: Disable all mouse protocols when mouse reporting is disabled
  1 file changed, 10 insertions(+)
 
 diff --git a/src/browser/services/MouseService.ts b/src/browser/services/MouseService.ts
-index 5a58d964..7cbeb084 100644
+index 61cbfa86c..fe2139cc4 100644
 --- a/src/browser/services/MouseService.ts
 +++ b/src/browser/services/MouseService.ts
-@@ -25,6 +25,7 @@ export class MouseService implements IMouseService {
+@@ -29,6 +29,7 @@ export class MouseService implements IMouseService {
    private _lastEvent: ICoreMouseEvent | null = null;
    private _wheelPartialScroll: number = 0;
    private _touchScrollAccumulator: number = 0;
 +  private _activeMouseEvents: CoreMouseEventType = CoreMouseEventType.NONE;
+   private _altMouseCursor: AltMouseCursorController | undefined;
  
    constructor(
-     @IRenderService private readonly _renderService: IRenderService,
-@@ -64,6 +65,15 @@ export class MouseService implements IMouseService {
-       mousemove: (ev: Event) => this._handleMouseMove(ctx, ev as MouseEvent)
-     };
+@@ -76,6 +77,15 @@ export class MouseService implements IMouseService {
+     );
+     register(this._altMouseCursor);
      register(this._mouseStateService.onProtocolChange(events => {
 +      this._activeMouseEvents = events;
 +      if (!this._optionsService.rawOptions.allowMouseReporting) {
@@ -29,12 +29,12 @@ index 5a58d964..7cbeb084 100644
 +      }
 +      this._handleProtocolChange(ctx, eventListeners, events);
 +    }));
-+    register(this._optionsService.onOptionChange(() => {
++    register(this._optionsService.onSpecificOptionChange('allowMouseReporting', () => {
 +      const events = this._optionsService.rawOptions.allowMouseReporting ?
 +        this._activeMouseEvents : CoreMouseEventType.NONE;
        this._handleProtocolChange(ctx, eventListeners, events);
      }));
-     // force initial onProtocolChange so we dont miss early mouse requests
+     register(this._optionsService.onSpecificOptionChange('mouseEventsRequireAlt', () => {
 -- 
-2.50.1 (Apple Git-155)
+2.54.0 (Apple Git-156)
 
